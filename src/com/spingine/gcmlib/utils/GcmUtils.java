@@ -2,9 +2,16 @@ package com.spingine.gcmlib.utils;
 
 import java.io.IOException;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.ParseException;
+import org.apache.http.util.EntityUtils;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.spingine.david.utils.Utilities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,29 +21,28 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public final class GcmUtils {
+public abstract class GcmUtils {
 	
 	private final static String TAG = GcmUtils.class.getSimpleName();
 	
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 	
-	private final static String SERVER_URL = "";
+	protected String SERVER_URL = "";
 
 	private static final String PROPERTY_REG_ID = "registration_id";
 
 	private static final String PROPERTY_APP_VERSION = "application_version";
 	
-	private static GcmUtils mInstance = null;
 	
-	private Context mContext = null;
+	protected Context mContext = null;
 	
-	private GoogleCloudMessaging gcm = null;
+	protected GoogleCloudMessaging gcm = null;
 	
-	private String SENDER_ID = null;
+	protected String SENDER_ID = null;
 	
-	private String regid = null;
+	protected String regid = null;
 	
-	private Class<Activity> mClassUsed = null;
+	private Class mClassUsed = null;
 	
 	
 	/**
@@ -46,31 +52,19 @@ public final class GcmUtils {
 	 */
 	private FinishAsyncTaskListener onFinishTask = null;
 	public interface FinishAsyncTaskListener{
-		void onFinishCall(String result);
+		void onFinishCallSuccess(String result);
+		void onFinishCallError(String result);
 	}
 	
 	
 	private RegisterCallback onRegister = null;
 	public interface RegisterCallback {
 		void onRegisterStart();
-		void onRegisterStop();
+		void onRegisterStopSuccess();
+		void onRegisterStopError();
 	}
 	
-	public static GcmUtils getInstance(Context context , Class<Activity> cls) throws Exception{
-		
-		if(!(context instanceof Activity))
-			throw new Exception("Error : not possible!");
-		
-		if(mInstance == null){
-			mInstance = new GcmUtils(context , cls);
-		}
-		
-		
-		
-		return mInstance;
-	}
-	
-	public GcmUtils(Context context , Class<Activity> cls){
+	public GcmUtils(Context context , Class cls){
 		this.mContext = context;
 		this.mClassUsed = cls;
 	}
@@ -101,7 +95,7 @@ public final class GcmUtils {
 	 * it doesn't, display a dialog that allows users to download the APK from
 	 * the Google Play Store or enable it in the device's system settings.
 	 */
-	private boolean checkPlayServices() {
+	public boolean checkPlayServices() {
 	    int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mContext);
 	    if (resultCode != ConnectionResult.SUCCESS) {
 	        if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
@@ -116,6 +110,7 @@ public final class GcmUtils {
 	    return true;
 	}
 	
+
 	
 	/**
 	 * Registers the application with GCM servers asynchronously.
@@ -124,6 +119,7 @@ public final class GcmUtils {
 	 * shared preferences.
 	 */
 	private void registerInBackground() {
+		
 	    new AsyncTask<Void, Void, String>() {
 	        @Override
 	        protected String doInBackground(Void... params) {
@@ -133,20 +129,23 @@ public final class GcmUtils {
 	    		if(onRegister != null){
 	    			onRegister.onRegisterStart();
 	    		}
-	            String msg = "";
+	    		HttpEntity entity = null;
+	            HttpResponse response = null;
+	    		String msg = "";
 	            
 	            try {
 	                if (gcm == null) {
 	                    gcm = GoogleCloudMessaging.getInstance(mContext);
 	                }
 	                regid = gcm.register(SENDER_ID);
-	                msg = "success";
+	                msg = "";
+	                
 
 	                // You should send the registration ID to your server over HTTP,
 	                // so it can use GCM/HTTP or CCS to send messages to your app.
 	                // The request to your server should be authenticated if your app
 	                // is using accounts.
-	                sendRegistrationIdToBackend();
+	                sendRegistrationIdToBackend(entity , response);
 
 	                // For this demo: we don't need to send it because the device
 	                // will send upstream messages to a server that echo back the
@@ -159,22 +158,79 @@ public final class GcmUtils {
 	                // If there is an error, don't just keep trying to register.
 	                // Require the user to click a button again, or perform
 	                // exponential back-off.
+		                
 	            }
+	            if(response != null && entity != null){
+		            final int statCode = response.getStatusLine().getStatusCode();
+		            if(statCode == HttpStatus.SC_OK){
+		            	try {
+							msg = EntityUtils.toString(entity);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} finally{
+							if(response != null){
+								response = null;
+							}
+							if(entity != null){
+								try {
+									entity.consumeContent();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}finally{
+									entity = null;
+								}
+							}
+						}
+		            }else{
+		            	msg = statCode+"";
+		            }
+	            }
+	            Log.d(TAG, "Message = " + msg);
 	            return msg;
 	        }
+	        
+	        
 
-	        @Override
+	        /* (non-Javadoc)
+			 * @see android.os.AsyncTask#onProgressUpdate(java.lang.Object[])
+			 */
+			@Override
+			protected void onProgressUpdate(Void... values) {
+				// TODO Auto-generated method stub
+				super.onProgressUpdate(values);
+			}
+
+
+
+			@Override
 	        protected void onPostExecute(String msg) {
-	            Log.d(TAG, msg);
-	            if(regid != null && !regid.equals("")){
-	            	if(onFinishTask != null){
-	            		onFinishTask.onFinishCall(msg);
+	            Log.v("PostExecute", msg);
+	            if(regid != null && !regid.equals("") && !Utilities.isNumber(msg)){
+	               	if(onFinishTask != null){
+	            		onFinishTask.onFinishCallSuccess(msg);
 	            	}
-	            	
 	            	if(onRegister != null){
-	            		onRegister.onRegisterStop();
+	            		onRegister.onRegisterStopSuccess();
+	            	}
+	            }else{
+	            	
+	               	if(onFinishTask != null){
+	            		onFinishTask.onFinishCallError(msg);
+	               	}
+	            	if(onRegister != null){
+	            		onRegister.onRegisterStopError();
 	            	}
 	            }
+	            
+	            
+ 
+            	
+
 	        }
 
 
@@ -185,9 +241,8 @@ public final class GcmUtils {
 	 * send and store registration to dynamodb
 	 * using the server_url
 	 */
-	private void sendRegistrationIdToBackend(){
-		
-	}
+	public abstract void sendRegistrationIdToBackend(HttpEntity entity , HttpResponse response);
+	
 	
 	/**
 	 * store registration id in local sql file 
@@ -260,14 +315,14 @@ public final class GcmUtils {
 	/**
 	 * @return the mClassUsed
 	 */
-	public Class<Activity> getmClassUsed() {
+	public Class getmClassUsed() {
 		return mClassUsed;
 	}
 
 	/**
 	 * @param mClassUsed the mClassUsed to set
 	 */
-	public void setmClassUsed(Class<Activity> mClassUsed) {
+	public void setmClassUsed(Class mClassUsed) {
 		this.mClassUsed = mClassUsed;
 	}
 
@@ -284,18 +339,32 @@ public final class GcmUtils {
 	public void setOnFinishTask(FinishAsyncTaskListener onFinishTask) {
 		this.onFinishTask = onFinishTask;
 	}
+	
+	
 
 	/**
-	 * @return the serverUrl
+	 * @return the onRegister
 	 */
-	public static String getServerUrl() {
-		return SERVER_URL;
+	public RegisterCallback getOnRegister() {
+		return onRegister;
+	}
+
+	/**
+	 * @param onRegister the onRegister to set
+	 */
+	public void setOnRegister(RegisterCallback onRegister) {
+		this.onRegister = onRegister;
 	}
 
 	/**
 	 * @return the regid
 	 */
 	public String getRegid() {
+		SharedPreferences shared = getGCMPreferences(mContext);
+		if(hasRegid()){
+			regid = shared.getString(PROPERTY_REG_ID, "");
+		}
+		
 		return regid;
 	}
 	
