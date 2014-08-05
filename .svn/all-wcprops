@@ -3,3 +3,33 @@ svn:wc:ra_dav:version-url
 V 50
 /svn/repo/!svn/ver/1729/Android/gcm-client-library
 END
+proguard-project.txt
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/proguard-project.txt
+END
+AndroidManifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/AndroidManifest.xml
+END
+project.properties
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/project.properties
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/.project
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/.classpath
+END

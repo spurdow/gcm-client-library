@@ -11,7 +11,6 @@ import org.apache.http.util.EntityUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.spingine.david.utils.Utilities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -210,7 +209,7 @@ public abstract class GcmUtils {
 			@Override
 	        protected void onPostExecute(String msg) {
 	            Log.v("PostExecute", msg);
-	            if(regid != null && !regid.equals("") && !Utilities.isNumber(msg)){
+	            if(regid != null && !regid.equals("") && !isNumber(msg)){
 	               	if(onFinishTask != null){
 	            		onFinishTask.onFinishCallSuccess(msg);
 	            	}
@@ -368,7 +367,11 @@ public abstract class GcmUtils {
 		return regid;
 	}
 	
-	
+	public  boolean isNumber(String n) {
+		// TODO Auto-generated method stub
+		return n != null && n.matches("[0-9]+") && n.length() > 0;
+
+	}
 	
 	
 }

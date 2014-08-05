@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/src/com/spingine/gcmlib/utils
+END
+GcmUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/src/com/spingine/gcmlib/utils/GcmUtils.java
+END
+GcmBroadcastReceiver.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/src/com/spingine/gcmlib/utils/GcmBroadcastReceiver.java
+END
+GcmIntentService.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/repo/!svn/ver/1743/Android/gcm-client-library/src/com/spingine/gcmlib/utils/GcmIntentService.java
+END
