@@ -14,7 +14,7 @@ If you do! proceed!
 
 Implementation of AbstractService
 
-```` 
+````java
 
 public class ExampleExtensionGcmIntentService extends GcmIntentService {
 
@@ -32,7 +32,7 @@ public class ExampleExtensionGcmIntentService extends GcmIntentService {
 
 Implementation of AbstractReceiver
 
-```` 
+````java
 
 public class ExampleExtensionGcmBroadcastReceiver extends GcmBroadcastReceiver {
 
@@ -55,7 +55,7 @@ public class ExampleExtensionGcmBroadcastReceiver extends GcmBroadcastReceiver {
 
 Implementation of abstract GcmUtils
 
-````
+````java
 
 public class ExampleExtensionGcmUtils extends GcmUtils {
 
@@ -70,12 +70,21 @@ public class ExampleExtensionGcmUtils extends GcmUtils {
 			HttpResponse response) {
 		// TODO Auto-generated method stub
 		// your implementation here when registering id to your backend
+
+		response = makeHttpRequest(the-context, the-name-value-pair-list , URL);
+		entity = response.getEntity();
+		// do something about entity
+	}
+
+	private HttpResponse makeHttpRequest(Context c, List<NameValuePair> lits, String url){
+		// your code here to send request to server
 	}
 
 }
 ````
+how to use in activity
 
-```` how to use in activity
+````java
 public class GcmActivityTest extends Activity{
 
 	protected ExampleExtensionGcmUtils gcm;
