@@ -8,9 +8,14 @@ If you do! proceed!
 
 *just same old style with adding service and receiver in manifest.
 
+*Remember to add the ExtendedService and ExtendedReceiver in the AndroidManifest, NOT the abstract classes but the implementing classes itself.
+
 *extend the abstract service, and the abstract receiver 
 
-```` Implementation of AbstractService
+Implementation of AbstractService
+
+```` 
+
 public class ExampleExtensionGcmIntentService extends GcmIntentService {
 
 	 
@@ -25,7 +30,10 @@ public class ExampleExtensionGcmIntentService extends GcmIntentService {
 }
 ````
 
-```` Implementation of AbstractReceiver
+Implementation of AbstractReceiver
+
+```` 
+
 public class ExampleExtensionGcmBroadcastReceiver extends GcmBroadcastReceiver {
 
 	@Override
@@ -45,7 +53,9 @@ public class ExampleExtensionGcmBroadcastReceiver extends GcmBroadcastReceiver {
 
 *after implementing your own GcmUtils setSender Id and url..
 
-````implementation of abstract GcmUtils
+Implementation of abstract GcmUtils
+
+````
 
 public class ExampleExtensionGcmUtils extends GcmUtils {
 
@@ -106,5 +116,5 @@ public class GcmActivityTest extends Activity{
 }
 ````
 
-*and your goods to goes!
+*and your good to go!
 
