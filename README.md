@@ -125,5 +125,28 @@ public class GcmActivityTest extends Activity{
 }
 ````
 
+````xml
+    <!--  GCM permissions -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <permission android:name="com.example.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
+    <!-- Receiver -->
+    <receiver
+        android:name="com.your-package.ExampleExtensionGcmBroadcastReceiver"
+        android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.your-package" />
+            </intent-filter>
+    </receiver>
+
+    <!-- Service -->
+    <service android:name="com.your-package.ExampleExtensioGcmIntentService" />
+
+
+````
+
 *and your good to go!
 
