@@ -245,6 +245,7 @@ public abstract class GcmUtils {
 	
 	/**
 	 * store registration id in local sql file 
+	 * or shared preferences
 	 * using device storage
 	 * @param context
 	 * @param regid

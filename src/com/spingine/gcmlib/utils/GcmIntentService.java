@@ -38,18 +38,17 @@ public abstract class GcmIntentService extends IntentService {
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+            	// error message here
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " +
-                        extras.toString());
+                // deleted message here
             // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
             	Log.i(TAG, "Received: " + extras.toString());
-                // Post notification of received message.
-                sendNotification(extras.getString("data"));
+                // Post notification of received bundle message.
+                sendNotification(extras);
                 
             }
         }
@@ -57,8 +56,9 @@ public abstract class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    public abstract void sendNotification(String msg) ;
+    public abstract void sendNotification(Bundle extras);
 }
