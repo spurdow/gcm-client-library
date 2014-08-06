@@ -237,7 +237,7 @@ public abstract class GcmUtils {
 	    
 	}
 	/**!!IMPORTANT
-	 * send and store registration to dynamodb
+	 * send and store registration to your database
 	 * using the server_url
 	 */
 	public abstract void sendRegistrationIdToBackend(HttpEntity entity , HttpResponse response);
