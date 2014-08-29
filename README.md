@@ -1,9 +1,7 @@
 gcm-client-library
 ==================
 
-this client library thinks that you already know the basics of GCM.
-
-If you do! proceed!
+If you have read the documentation for GCM then this shouldnt be hard for you :)
 
 
 *just same old style with adding service and receiver in manifest.
